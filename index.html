@@ -1,1042 +1,977 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#0d1e08">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="description" content="Jungle Avatar Survival - Action top-down brawler PWA">
-  <title>Jungle Avatar Survival PWA</title>
-  
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: none;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-    body, html {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-color: #0d1e08;
-      color: #ffffff;
-    }
-    #gameCanvas {
-      display: block;
-      width: 100vw;
-      height: 100vh;
-      background: #14320b;
-    }
-    /* Touch controls styling */
-    .control-btn {
-      position: absolute;
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      font-weight: 800;
-      font-size: 14px;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border: 3px solid rgba(255, 255, 255, 0.8);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.4);
-      backdrop-filter: blur(4px);
-      transition: transform 0.08s ease, filter 0.1s ease;
-      pointer-events: auto;
-    }
-    .control-btn:active {
-      transform: scale(0.90);
-      filter: brightness(1.2);
-    }
-    #joystickZone {
-      position: absolute;
-      bottom: 25px;
-      left: 25px;
-      width: 130px;
-      height: 130px;
-      background: rgba(0, 0, 0, 0.35);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: auto;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    }
-    #joystickStick {
-      width: 54px;
-      height: 54px;
-      background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(200,200,200,0.8) 100%);
-      border-radius: 50%;
-      transform: translate(0px, 0px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
-    }
-    /* Glassmorphism HUD */
-    .hud-card {
-      background: rgba(13, 30, 8, 0.75);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0d1e08">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="Jungle Avatar Survival - Action top-down brawler PWA">
+  <title>Jungle Avatar Survival PWA</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #0d1e08;
+      color: #ffffff;
+    }
+    #gameCanvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      background: #14320b;
+    }
+    /* Touch controls styling */
+    .control-btn {
+      position: absolute;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      font-weight: 800;
+      font-size: 14px;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.4);
+      backdrop-filter: blur(4px);
+      transition: transform 0.08s ease, filter 0.1s ease;
+      pointer-events: auto;
+    }
+    .control-btn:active {
+      transform: scale(0.90);
+      filter: brightness(1.2);
+    }
+    #joystickZone {
+      position: absolute;
+      bottom: 25px;
+      left: 25px;
+      width: 130px;
+      height: 130px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+    #joystickStick {
+      width: 54px;
+      height: 54px;
+      background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(200,200,200,0.8) 100%);
+      border-radius: 50%;
+      transform: translate(0px, 0px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    }
+    /* Glassmorphism HUD */
+    .hud-card {
+      background: rgba(13, 30, 8, 0.75);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Game Canvas -->
-  <canvas id="gameCanvas"></canvas>
-
-  <!-- HUD Interface -->
-  <div id="hud" class="absolute top-3 left-3 right-3 pointer-events-none flex justify-between items-start z-10">
-    <div class="flex flex-col gap-2 max-w-[280px] sm:max-w-xs">
-      <!-- Player Status Card -->
-      <div class="hud-card p-3 rounded-xl flex flex-col gap-1.5">
-        <div class="flex justify-between items-center text-xs font-bold tracking-wide">
-          <span class="text-emerald-400 flex items-center gap-1">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
-            HERO: <span id="heroRank" class="text-white">Scout</span>
-          </span>
-          <span class="text-amber-400 font-mono text-sm" id="scoreDisplay">0 PTS</span>
-        </div>
-        <!-- Health Bar -->
-        <div class="w-full bg-black/60 rounded-full h-3.5 p-0.5 border border-white/20 relative overflow-hidden">
-          <div id="hpBar" class="bg-gradient-to-r from-red-600 via-emerald-500 to-green-400 h-full rounded-full transition-all duration-150" style="width: 100%;"></div>
-          <span id="hpText" class="absolute inset-0 flex items-center justify-center text-[10px] font-black tracking-wider text-white drop-shadow-md">100 / 100 HP</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- HUD Control Actions -->
-    <div class="flex gap-2 pointer-events-auto">
-      <button id="installPwaBtn" class="hidden hud-card px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500/80 hover:bg-amber-500 text-black flex items-center gap-1 border border-amber-300 shadow-lg">
-        ⚡ Install
-      </button>
-      <button id="soundToggleBtn" class="hud-card px-3 py-1.5 rounded-lg text-xs font-bold text-white hover:bg-white/10 border border-white/20">
-        🔊 Sound: ON
-      </button>
-      <button id="pauseBtn" class="hud-card px-3 py-1.5 rounded-lg text-xs font-bold text-white hover:bg-white/10 border border-white/20">
-        ⏸️ Pause
-      </button>
-    </div>
-  </div>
-
-  <!-- Touch Joystick & Action Buttons -->
-  <div id="touchControls" class="z-20">
-    <div id="joystickZone">
-      <div id="joystickStick"></div>
-    </div>
-
-    <button id="runBtn" class="control-btn bg-emerald-600/80 border-emerald-300" style="bottom: 30px; right: 125px;">
-      <span class="text-lg">🏃</span>
-      <span class="text-[10px]">RUN</span>
-    </button>
-    <button id="kickBtn" class="control-btn bg-amber-600/80 border-amber-300" style="bottom: 115px; right: 30px;">
-      <span class="text-lg">🦶</span>
-      <span class="text-[10px]">KICK</span>
-    </button>
-    <button id="punchBtn" class="control-btn bg-rose-600/80 border-rose-300" style="bottom: 30px; right: 30px;">
-      <span class="text-lg">👊</span>
-      <span class="text-[10px]">PUNCH</span>
-    </button>
-  </div>
-
-  <!-- Game Over Overlay -->
-  <div id="gameOverModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center z-50 p-4">
-    <div class="hud-card p-6 rounded-2xl max-w-sm w-full text-center border border-emerald-500/30 flex flex-col items-center gap-4">
-      <h2 class="text-3xl font-black text-rose-500 tracking-wider">GAME OVER</h2>
-      <p class="text-gray-300 text-sm">Defeated in the wild jungle!</p>
-      
-      <div class="bg-black/40 rounded-xl p-4 w-full border border-white/10 flex flex-col gap-2">
-        <div class="flex justify-between text-sm"><span class="text-gray-400">Final Score:</span><span id="finalScore" class="font-bold text-amber-400">0</span></div>
-        <div class="flex justify-between text-sm"><span class="text-gray-400">Rank Reached:</span><span id="finalRank" class="font-bold text-emerald-400">Scout</span></div>
-        <div class="flex justify-between text-sm"><span class="text-gray-400">Rivals Knocked Out:</span><span id="finalKills" class="font-bold text-white">0</span></div>
-      </div>
-
-      <button id="restartBtn" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-black font-black text-lg rounded-xl shadow-lg hover:brightness-110 active:scale-95 transition-all">
-        PLAY AGAIN ⚔️
-      </button>
-    </div>
-  </div>
-
-  <!-- Pause Modal -->
-  <div id="pauseModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-md flex flex-col items-center justify-center z-50 p-4">
-    <div class="hud-card p-6 rounded-2xl max-w-xs w-full text-center border border-white/20 flex flex-col gap-4">
-      <h2 class="text-2xl font-bold text-white">GAME PAUSED</h2>
-      <div class="text-xs text-gray-300 text-left space-y-1 bg-black/40 p-3 rounded-lg border border-white/10">
-        <p class="font-bold text-emerald-400 mb-1">Desktop Controls:</p>
-        <p>• Move: <kbd class="bg-white/20 px-1 rounded">WASD</kbd> or <kbd class="bg-white/20 px-1 rounded">Arrows</kbd></p>
-        <p>• Punch: <kbd class="bg-white/20 px-1 rounded">J</kbd> or <kbd class="bg-white/20 px-1 rounded">Space</kbd></p>
-        <p>• Kick: <kbd class="bg-white/20 px-1 rounded">K</kbd></p>
-        <p>• Run Toggle: <kbd class="bg-white/20 px-1 rounded">Shift</kbd></p>
-      </div>
-      <button id="resumeBtn" class="py-2.5 bg-emerald-500 text-black font-bold rounded-xl hover:bg-emerald-400">
-        Resume Game
-      </button>
-    </div>
-  </div>
-
-  <script>
-    // Self-contained Service Worker & Manifest dynamic registration for PWA readiness
-    (function setupPwa() {
-      // 1. Dynamic Manifest JSON
-      const manifestData = {
-        name: "Jungle Avatar Survival PWA",
-        short_name: "JungleSurvival",
-        description: "Action top-down jungle brawler survival PWA",
-        start_url: "./",
-        display: "standalone",
-        orientation: "landscape-primary",
-        background_color: "#0d1e08",
-        theme_color: "#0d1e08",
-        icons: [
-          {
-            src: "https://placehold.co/192x192/0d1e08/00ffcc?text=JUNGLE",
-            sizes: "192x192",
-            type: "image/png"
-          },
-          {
-            src: "https://placehold.co/512x512/0d1e08/00ffcc?text=JUNGLE",
-            sizes: "512x512",
-            type: "image/png"
-          }
-        ]
-      };
-
-      const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
-      const manifestUrl = URL.createObjectURL(manifestBlob);
-      const manifestLink = document.createElement('link');
-      manifestLink.rel = 'manifest';
-      manifestLink.href = manifestUrl;
-      document.head.appendChild(manifestLink);
-
-      // 2. Service Worker Blob Injection
-      if ('serviceWorker' in navigator) {
-        const swCode = `
-          const CACHE_NAME = 'jungle-avatar-v1';
-          self.addEventListener('install', (e) => {
-            self.skipWaiting();
-          });
-          self.addEventListener('activate', (e) => {
-            e.waitUntil(clients.claim());
-          });
-          self.addEventListener('fetch', (e) => {
-            e.respondWith(
-              fetch(e.request).catch(() => caches.match(e.request))
-            );
-          });
-        `;
-        const swBlob = new Blob([swCode], { type: 'text/javascript' });
-        const swUrl = URL.createObjectURL(swBlob);
-        
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register(swUrl)
-            .then(() => console.log('PWA Service Worker dynamic registration succeeded.'))
-            .catch(err => console.log('Service Worker failed:', err));
-        });
-      }
-
-      // 3. PWA Install Prompt Handling
-      let deferredPrompt = null;
-      const installBtn = document.getElementById('installPwaBtn');
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        if (installBtn) installBtn.classList.remove('hidden');
-      });
-
-      if (installBtn) {
-        installBtn.addEventListener('click', async () => {
-          if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-              installBtn.classList.add('hidden');
-            }
-            deferredPrompt = null;
-          }
-        });
-      }
-    })();
-
-    // Procedural Audio Engine using Web Audio API
-    class AudioEngine {
-      constructor() {
-        this.ctx = null;
-        this.enabled = true;
-      }
-
-      init() {
-        if (!this.ctx) {
-          const AudioCtx = window.AudioContext || window.webkitAudioContext;
-          this.ctx = new AudioCtx();
-        }
-        if (this.ctx && this.ctx.state === 'suspended') {
-          this.ctx.resume();
-        }
-      }
-
-      playPunch() {
-        if (!this.enabled || !this.ctx) return;
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(150, now);
-        osc.frequency.exponentialRampToValueAtTime(30, now + 0.12);
-
-        gain.gain.setValueAtTime(0.6, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
-
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-
-        osc.start(now);
-        osc.stop(now + 0.12);
-      }
-
-      playKick() {
-        if (!this.enabled || !this.ctx) return;
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(220, now);
-        osc.frequency.exponentialRampToValueAtTime(20, now + 0.18);
-
-        gain.gain.setValueAtTime(0.8, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
-
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-
-        osc.start(now);
-        osc.stop(now + 0.18);
-      }
-
-      playHit() {
-        if (!this.enabled || !this.ctx) return;
-        const now = this.ctx.currentTime;
-        const bufferSize = this.ctx.sampleRate * 0.08;
-        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-          data[i] = Math.random() * 2 - 1;
-        }
-
-        const noise = this.ctx.createBufferSource();
-        noise.buffer = buffer;
-
-        const filter = this.ctx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(800, now);
-
-        const gain = this.ctx.createGain();
-        gain.gain.setValueAtTime(0.5, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-
-        noise.connect(filter);
-        filter.connect(gain);
-        gain.connect(this.ctx.destination);
-
-        noise.start(now);
-      }
-
-      playRankUp() {
-        if (!this.enabled || !this.ctx) return;
-        const now = this.ctx.currentTime;
-        const notes = [261.63, 329.63, 392.00, 523.25]; // C E G C
-        notes.forEach((freq, idx) => {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(freq, now + idx * 0.08);
-
-          gain.gain.setValueAtTime(0.3, now + idx * 0.08);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.25);
-
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-
-          osc.start(now + idx * 0.08);
-          osc.stop(now + idx * 0.08 + 0.25);
-        });
-      }
-
-      playGameOver() {
-        if (!this.enabled || !this.ctx) return;
-        const now = this.ctx.currentTime;
-        const notes = [300, 260, 220, 150];
-        notes.forEach((freq, idx) => {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(freq, now + idx * 0.15);
-
-          gain.gain.setValueAtTime(0.4, now + idx * 0.15);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.15 + 0.2);
-
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-
-          osc.start(now + idx * 0.15);
-          osc.stop(now + idx * 0.15 + 0.2);
-        });
-      }
-    }
-
-    const sounds = new AudioEngine();
-
-    // Game Canvas Context Initialization
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    // Global State
-    let score = 0;
-    let rank = 1; // 1: Scout, 2: Warrior, 3: Apex Master
-    let killsCount = 0;
-    let isRunningToggle = false;
-    let isPaused = false;
-    let isGameOver = false;
-
-    // Environmental Jungle Props (Trees)
-    const trees = [];
-    function generateJungleMap() {
-      trees.length = 0;
-      const count = Math.floor((canvas.width * canvas.height) / 35000) + 12;
-      for (let i = 0; i < count; i++) {
-        trees.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          radius: 25 + Math.random() * 20
-        });
-      }
-    }
-    generateJungleMap();
-
-    // Player Configuration
-    const player = {
-      x: canvas.width / 2,
-      y: canvas.height / 2,
-      radius: 18,
-      walkSpeed: 3.8,
-      runSpeed: 6.8,
-      hp: 100,
-      maxHp: 100,
-      angle: 0,
-      isMoving: false,
-      animFrame: 0,
-      action: 'idle', // 'idle', 'punch', 'kick'
-      actionTimer: 0,
-      // Color & Visual Attributes
-      skinColor: '#f1c27d',
-      shirtColor: '#2e7d32',
-      pantsColor: '#3e2723',
-      hairColor: '#1b0000',
-      fistSize: 12
-    };
-
-    // Rivals Array & Configuration
-    const rivals = [];
-    const rivalNames = ['Shadow Tracker', 'Jungle Raider', 'Wild Stalker', 'Viper Brawler', 'Tribal Hunter'];
-    const rivalStyles = [
-      { shirt: '#c62828', pants: '#1565c0', hair: '#212121', skin: '#e0ac69' },
-      { shirt: '#6a1b9a', pants: '#37474f', hair: '#f57f17', skin: '#ffdbac' },
-      { shirt: '#ef6c00', pants: '#2e7d32', hair: '#4e342e', skin: '#8d6e63' },
-      { shirt: '#00838f', pants: '#424242', hair: '#000000', skin: '#f1c27d' }
-    ];
-
-    function spawnRival() {
-      if (isGameOver || isPaused) return;
-      if (rivals.length < 6) {
-        const style = rivalStyles[Math.floor(Math.random() * rivalStyles.length)];
-        // Spawn near border outside viewport
-        const side = Math.floor(Math.random() * 4);
-        let rx, ry;
-        if (side === 0) { rx = -30; ry = Math.random() * canvas.height; }
-        else if (side === 1) { rx = canvas.width + 30; ry = Math.random() * canvas.height; }
-        else if (side === 2) { rx = Math.random() * canvas.width; ry = -30; }
-        else { rx = Math.random() * canvas.width; ry = canvas.height + 30; }
-
-        rivals.push({
-          x: rx,
-          y: ry,
-          radius: 16,
-          speed: 2.0 + Math.random() * 1.2,
-          hp: 60 + (rank * 15),
-          maxHp: 60 + (rank * 15),
-          angle: 0,
-          animFrame: Math.random() * 10,
-          action: 'idle',
-          actionTimer: 0,
-          name: rivalNames[Math.floor(Math.random() * rivalNames.length)],
-          skinColor: style.skin,
-          shirtColor: style.shirt,
-          pantsColor: style.pants,
-          hairColor: style.hair,
-          fistSize: 9
-        });
-      }
-    }
-    setInterval(spawnRival, 2500);
-
-    // Visual FX System: Hit Sparks & Floating Text
-    const particles = [];
-    const damageTexts = [];
-
-    function addHitSparks(x, y, color = '#ffeb3b') {
-      for (let i = 0; i < 10; i++) {
-        const pAngle = Math.random() * Math.PI * 2;
-        const pSpeed = 2 + Math.random() * 5;
-        particles.push({
-          x: x,
-          y: y,
-          vx: Math.cos(pAngle) * pSpeed,
-          vy: Math.sin(pAngle) * pSpeed,
-          life: 1.0,
-          color: color,
-          size: 3 + Math.random() * 3
-        });
-      }
-    }
-
-    function addFloatingText(text, x, y, color = '#ff5252') {
-      damageTexts.push({
-        text: text,
-        x: x,
-        y: y,
-        vy: -1.5,
-        life: 1.0,
-        color: color
-      });
-    }
-
-    // Input Handling: Virtual Touch Joystick + Buttons & Keyboard
-    const joystickZone = document.getElementById('joystickZone');
-    const joystickStick = document.getElementById('joystickStick');
-    let moveVector = { x: 0, y: 0 };
-    let activeTouchId = null;
-
-    // Touch Joystick Listener
-    joystickZone.addEventListener('touchstart', (e) => {
-      sounds.init();
-      if (activeTouchId === null) {
-        const touch = e.changedTouches[0];
-        activeTouchId = touch.identifier;
-        updateJoystick(touch);
-      }
-    }, { passive: false });
-
-    window.addEventListener('touchmove', (e) => {
-      if (activeTouchId !== null) {
-        for (let i = 0; i < e.touches.length; i++) {
-          if (e.touches[i].identifier === activeTouchId) {
-            updateJoystick(e.touches[i]);
-            break;
-          }
-        }
-      }
-    }, { passive: false });
-
-    function resetJoystick() {
-      activeTouchId = null;
-      joystickStick.style.transform = 'translate(0px, 0px)';
-      moveVector = { x: 0, y: 0 };
-      if (!keyState.isMoving) player.isMoving = false;
-    }
-
-    window.addEventListener('touchend', (e) => {
-      for (let i = 0; i < e.changedTouches.length; i++) {
-        if (e.changedTouches[i].identifier === activeTouchId) {
-          resetJoystick();
-          break;
-        }
-      }
-    });
-
-    function updateJoystick(touch) {
-      const rect = joystickZone.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-
-      let dx = touch.clientX - centerX;
-      let dy = touch.clientY - centerY;
-      const dist = Math.hypot(dx, dy);
-      const maxDist = rect.width / 2;
-
-      if (dist > maxDist) {
-        dx = (dx / dist) * maxDist;
-        dy = (dy / dist) * maxDist;
-      }
-
-      joystickStick.style.transform = `translate(${dx}px, ${dy}px)`;
-      moveVector.x = dx / maxDist;
-      moveVector.y = dy / maxDist;
-
-      if (dist > 8) {
-        player.isMoving = true;
-        player.angle = Math.atan2(dy, dx);
-      } else if (!keyState.isMoving) {
-        player.isMoving = false;
-      }
-    }
-
-    // Touch Action Buttons
-    const runBtn = document.getElementById('runBtn');
-    runBtn.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      sounds.init();
-      isRunningToggle = !isRunningToggle;
-      runBtn.querySelector('span:nth-child(2)').innerText = isRunningToggle ? 'RUNNING' : 'RUN';
-      runBtn.classList.toggle('bg-amber-600/80', isRunningToggle);
-      runBtn.classList.toggle('bg-emerald-600/80', !isRunningToggle);
-    });
-
-    document.getElementById('punchBtn').addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      sounds.init();
-      triggerPlayerAction('punch');
-    });
-
-    document.getElementById('kickBtn').addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      sounds.init();
-      triggerPlayerAction('kick');
-    });
-
-    // Keyboard Control Listeners
-    const keys = {};
-    const keyState = { isMoving: false };
-
-    window.addEventListener('keydown', (e) => {
-      sounds.init();
-      keys[e.code] = true;
-      if (['Space', 'KeyJ'].includes(e.code)) triggerPlayerAction('punch');
-      if (e.code === 'KeyK') triggerPlayerAction('kick');
-      if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
-        isRunningToggle = !isRunningToggle;
-      }
-    });
-
-    window.addEventListener('keyup', (e) => {
-      keys[e.code] = false;
-    });
-
-    function handleKeyboardMovement() {
-      let kx = 0;
-      let ky = 0;
-      if (keys['KeyW'] || keys['ArrowUp']) ky -= 1;
-      if (keys['KeyS'] || keys['ArrowDown']) ky += 1;
-      if (keys['KeyA'] || keys['ArrowLeft']) kx -= 1;
-      if (keys['KeyD'] || keys['ArrowRight']) kx += 1;
-
-      if (kx !== 0 || ky !== 0) {
-        const len = Math.hypot(kx, ky);
-        moveVector.x = kx / len;
-        moveVector.y = ky / len;
-        player.angle = Math.atan2(ky, kx);
-        player.isMoving = true;
-        keyState.isMoving = true;
-      } else {
-        keyState.isMoving = false;
-        if (activeTouchId === null) {
-          player.isMoving = false;
-        }
-      }
-    }
-
-    // Trigger Action & Combat Resolution
-    function triggerPlayerAction(type) {
-      if (player.action !== 'idle' || isGameOver || isPaused) return;
-      player.action = type;
-      player.actionTimer = 14; // Animation frame counter
-
-      if (type === 'punch') sounds.playPunch();
-      if (type === 'kick') sounds.playKick();
-
-      const attackRange = type === 'punch' ? 65 : 80;
-      const damage = type === 'punch' ? 30 : 45;
-
-      // Check hit against nearby rivals
-      rivals.forEach((rival, idx) => {
-        const dist = Math.hypot(player.x - rival.x, player.y - rival.y);
-        if (dist < attackRange) {
-          // Verify attack cone angle (~120 degrees)
-          const angleToRival = Math.atan2(rival.y - player.y, rival.x - player.x);
-          let angleDiff = Math.abs(player.angle - angleToRival);
-          if (angleDiff > Math.PI) angleDiff = Math.PI * 2 - angleDiff;
-
-          if (angleDiff < Math.PI / 1.5) {
-            rival.hp -= damage;
-            sounds.playHit();
-            addHitSparks(rival.x, rival.y, type === 'punch' ? '#ff3333' : '#ff9900');
-            addFloatingText(`-${damage}`, rival.x, rival.y - 20, '#ff3333');
-
-            // Apply Knockback Physics
-            rival.x += Math.cos(player.angle) * 35;
-            rival.y += Math.sin(player.angle) * 35;
-
-            // Check Defeat
-            if (rival.hp <= 0) {
-              rivals.splice(idx, 1);
-              killsCount++;
-              score += 150;
-              addFloatingText('+150 PTS', rival.x, rival.y - 35, '#ffcc00');
-              checkRankProgression();
-            }
-          }
-        }
-      });
-    }
-
-    function checkRankProgression() {
-      let newRank = rank;
-      if (score >= 1200 && rank < 3) {
-        newRank = 3;
-        player.shirtColor = '#ffb300';
-        player.fistSize = 16;
-      } else if (score >= 450 && rank < 2) {
-        newRank = 2;
-        player.shirtColor = '#1565c0';
-        player.fistSize = 14;
-      }
-
-      if (newRank !== rank) {
-        rank = newRank;
-        sounds.playRankUp();
-        const rankTitle = rank === 3 ? 'Apex Master' : rank === 2 ? 'Warrior' : 'Scout';
-        addFloatingText(`RANK UP: ${rankTitle}!`, player.x, player.y - 40, '#00ffcc');
-      }
-
-      // Update HUD
-      document.getElementById('scoreDisplay').innerText = `${score} PTS`;
-      document.getElementById('heroRank').innerText = rank === 3 ? 'Apex Master' : rank === 2 ? 'Warrior' : 'Scout';
-    }
-
-    // Top-down Dynamic Avatar Drawing Function
-    function drawAvatar(char, isPlayer = false) {
-      ctx.save();
-      ctx.translate(char.x, char.y);
-      ctx.rotate(char.angle);
-
-      const legAnim = Math.sin(char.animFrame) * 12;
-      const currentFist = char.action === 'punch' ? char.fistSize * 1.5 : char.fistSize;
-
-      // Selection Aura for Player Hero
-      if (isPlayer) {
-        ctx.beginPath();
-        ctx.arc(0, 0, 26, 0, Math.PI * 2);
-        ctx.strokeStyle = '#00ffcc';
-        ctx.lineWidth = 2.5;
-        ctx.setLineDash([6, 4]);
-        ctx.stroke();
-        ctx.setLineDash([]);
-      }
-
-      // Legs / Pants
-      ctx.strokeStyle = char.pantsColor;
-      ctx.lineWidth = 8;
-      ctx.lineCap = 'round';
-
-      // Left Leg
-      ctx.beginPath();
-      ctx.moveTo(-6, 4);
-      ctx.lineTo(-6 + (char.isMoving ? legAnim : 0), 20);
-      ctx.stroke();
-
-      // Right Leg (or Kicking Leg Animation)
-      ctx.beginPath();
-      ctx.moveTo(6, 4);
-      if (char.action === 'kick') {
-        ctx.lineTo(28, 4); // Kick swing forward
-      } else {
-        ctx.lineTo(6 - (char.isMoving ? legAnim : 0), 20);
-      }
-      ctx.stroke();
-
-      // Torso / Shirt
-      ctx.fillStyle = char.shirtColor;
-      ctx.beginPath();
-      ctx.roundRect(-12, -14, 24, 24, 6);
-      ctx.fill();
-
-      // Head
-      ctx.beginPath();
-      ctx.arc(0, -20, 10, 0, Math.PI * 2);
-      ctx.fillStyle = char.skinColor;
-      ctx.fill();
-
-      // Hair
-      ctx.beginPath();
-      ctx.arc(0, -23, 9.5, Math.PI, Math.PI * 2);
-      ctx.fillStyle = char.hairColor;
-      ctx.fill();
-
-      // Arms & Brawling Fists
-      ctx.fillStyle = char.skinColor;
-      ctx.strokeStyle = char.skinColor;
-      ctx.lineWidth = 6;
-
-      // Left Arm
-      ctx.beginPath();
-      ctx.moveTo(-12, -8);
-      ctx.lineTo(-18, 6);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(-18, 8, currentFist, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Right Arm (Punch Attack Extender)
-      ctx.beginPath();
-      ctx.moveTo(12, -8);
-      if (char.action === 'punch') {
-        ctx.lineTo(28, -8); // Extension forward
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(36, -8, currentFist * 1.3, 0, Math.PI * 2); // Heavy Impact Fist
-        ctx.fill();
-      } else {
-        ctx.lineTo(18, 6);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(18, 8, currentFist, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      ctx.restore();
-
-      // Health Bar over Rival Heads
-      if (!isPlayer) {
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 11px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(char.name, char.x, char.y - 36);
-
-        const hpPct = Math.max(0, char.hp / char.maxHp);
-        ctx.fillStyle = 'rgba(0,0,0,0.6)';
-        ctx.fillRect(char.x - 18, char.y - 32, 36, 5);
-        ctx.fillStyle = hpPct > 0.4 ? '#4caf50' : '#f44336';
-        ctx.fillRect(char.x - 18, char.y - 32, 36 * hpPct, 5);
-      }
-    }
-
-    // Environmental Jungle Drawing
-    function drawJungleEnvironment() {
-      // Background Grass Grid Pattern
-      ctx.fillStyle = '#14320b';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Grass Tuft Accents
-      ctx.fillStyle = '#1a3e0e';
-      for (let x = 30; x < canvas.width; x += 90) {
-        for (let y = 30; y < canvas.height; y += 90) {
-          ctx.beginPath();
-          ctx.arc(x, y, 12, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-
-      // Draw Jungle Canopy / Trees
-      trees.forEach(tree => {
-        ctx.beginPath();
-        ctx.arc(tree.x, tree.y, tree.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(10, 25, 6, 0.85)';
-        ctx.fill();
-        ctx.strokeStyle = '#2d5a1e';
-        ctx.lineWidth = 3;
-        ctx.stroke();
-      });
-    }
-
-    // Main Game Update Engine
-    function updateGame() {
-      if (isPaused || isGameOver) return;
-
-      handleKeyboardMovement();
-
-      // Player Movement Logic
-      const speed = isRunningToggle ? player.runSpeed : player.walkSpeed;
-      if (player.isMoving) {
-        player.x += moveVector.x * speed;
-        player.y += moveVector.y * speed;
-        player.animFrame += isRunningToggle ? 0.35 : 0.18;
-      }
-
-      // Action Timers
-      if (player.actionTimer > 0) {
-        player.actionTimer--;
-        if (player.actionTimer === 0) player.action = 'idle';
-      }
-
-      // Keep Player in Boundaries
-      player.x = Math.max(25, Math.min(canvas.width - 25, player.x));
-      player.y = Math.max(25, Math.min(canvas.height - 25, player.y));
-
-      // Rivals Logic
-      rivals.forEach(rival => {
-        const dx = player.x - rival.x;
-        const dy = player.y - rival.y;
-        const dist = Math.hypot(dx, dy);
-
-        rival.angle = Math.atan2(dy, dx);
-        rival.x += Math.cos(rival.angle) * rival.speed;
-        rival.y += Math.sin(rival.angle) * rival.speed;
-        rival.animFrame += 0.12;
-
-        // Rival Attacks Player on Proximity
-        if (dist < 32) {
-          player.hp -= 0.22;
-          if (Math.random() < 0.05) {
-            sounds.playHit();
-            addHitSparks(player.x, player.y, '#ff1744');
-          }
-
-          // Check Player Defeat
-          if (player.hp <= 0) {
-            player.hp = 0;
-            triggerGameOver();
-          }
-        }
-      });
-
-      // Update Health HUD Bar
-      const hpBar = document.getElementById('hpBar');
-      const hpText = document.getElementById('hpText');
-      const hpPct = Math.max(0, (player.hp / player.maxHp) * 100);
-      hpBar.style.width = `${hpPct}%`;
-      hpText.innerText = `${Math.ceil(player.hp)} / ${player.maxHp} HP`;
-
-      // Update Particles
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.life -= 0.05;
-        if (p.life <= 0) particles.splice(i, 1);
-      }
-
-      // Update Floating Texts
-      for (let i = damageTexts.length - 1; i >= 0; i--) {
-        const t = damageTexts[i];
-        t.y += t.vy;
-        t.life -= 0.03;
-        if (t.life <= 0) damageTexts.splice(i, 1);
-      }
-    }
-
-    // Render Canvas Loop
-    function renderGame() {
-      drawJungleEnvironment();
-
-      // Render Rivals
-      rivals.forEach(rival => drawAvatar(rival, false));
-
-      // Render Player Hero
-      drawAvatar(player, true);
-
-      // Render Visual Spark Particles
-      particles.forEach(p => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = p.life;
-        ctx.fill();
-        ctx.globalAlpha = 1.0;
-      });
-
-      // Render Floating Damage Texts
-      damageTexts.forEach(t => {
-        ctx.fillStyle = t.color;
-        ctx.font = 'black 14px Arial';
-        ctx.textAlign = 'center';
-        ctx.globalAlpha = Math.max(0, t.life);
-        ctx.fillText(t.text, t.x, t.y);
-        ctx.globalAlpha = 1.0;
-      });
-    }
-
-    function gameLoop() {
-      updateGame();
-      renderGame();
-      requestAnimationFrame(gameLoop);
-    }
-
-    // Game Over & UI Controls
-    function triggerGameOver() {
-      isGameOver = true;
-      sounds.playGameOver();
-      document.getElementById('finalScore').innerText = score;
-      document.getElementById('finalRank').innerText = rank === 3 ? 'Apex Master' : rank === 2 ? 'Warrior' : 'Scout';
-      document.getElementById('finalKills').innerText = killsCount;
-      document.getElementById('gameOverModal').classList.remove('hidden');
-    }
-
-    document.getElementById('restartBtn').addEventListener('click', () => {
-      score = 0;
-      rank = 1;
-      killsCount = 0;
-      player.hp = 100;
-      player.x = canvas.width / 2;
-      player.y = canvas.height / 2;
-      player.shirtColor = '#2e7d32';
-      player.fistSize = 12;
-      rivals.length = 0;
-      isGameOver = false;
-      document.getElementById('gameOverModal').classList.add('hidden');
-      document.getElementById('scoreDisplay').innerText = '0 PTS';
-      document.getElementById('heroRank').innerText = 'Scout';
-    });
-
-    // Pause Modal Listeners
-    const pauseBtn = document.getElementById('pauseBtn');
-    const pauseModal = document.getElementById('pauseModal');
-    const resumeBtn = document.getElementById('resumeBtn');
-
-    pauseBtn.addEventListener('click', () => {
-      isPaused = !isPaused;
-      pauseModal.classList.toggle('hidden', !isPaused);
-      pauseBtn.innerText = isPaused ? '▶️ Resume' : '⏸️ Pause';
-    });
-
-    resumeBtn.addEventListener('click', () => {
-      isPaused = false;
-      pauseModal.classList.add('hidden');
-      pauseBtn.innerText = '⏸️ Pause';
-    });
-
-    // Sound Toggle Button
-    const soundToggleBtn = document.getElementById('soundToggleBtn');
-    soundToggleBtn.addEventListener('click', () => {
-      sounds.enabled = !sounds.enabled;
-      soundToggleBtn.innerText = sounds.enabled ? '🔊 Sound: ON' : '🔇 Sound: OFF';
-    });
-
-    // Start Animation Loop on Window Load
-    window.onload = function() {
-      gameLoop();
-    };
-  </script>
+  <!-- Game Canvas -->
+  <canvas id="gameCanvas"></canvas>
+
+  <!-- HUD Interface -->
+  <div id="hud" class="absolute top-3 left-3 right-3 pointer-events-none flex justify-between items-start z-10">
+    <div class="flex flex-col gap-2 max-w-[280px] sm:max-w-xs">
+      <!-- Player Status Card -->
+      <div class="hud-card p-3 rounded-xl flex flex-col gap-1.5">
+        <div class="flex justify-between items-center text-xs font-bold tracking-wide">
+          <span class="text-emerald-400 flex items-center gap-1">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
+            HERO: <span id="heroRank" class="text-white">Scout</span>
+          </span>
+          <span class="text-amber-400 font-mono text-sm" id="scoreDisplay">0 PTS</span>
+        </div>
+        <!-- Health Bar -->
+        <div class="w-full bg-black/60 rounded-full h-3.5 p-0.5 border border-white/20 relative overflow-hidden">
+          <div id="hpBar" class="bg-gradient-to-r from-red-600 via-emerald-500 to-green-400 h-full rounded-full transition-all duration-150" style="width: 100%;"></div>
+          <span id="hpText" class="absolute inset-0 flex items-center justify-center text-[10px] font-black tracking-wider text-white drop-shadow-md">100 / 100 HP</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HUD Control Actions -->
+    <div class="flex gap-2 pointer-events-auto">
+      <button id="installPwaBtn" class="hidden hud-card px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500/80 hover:bg-amber-500 text-black flex items-center gap-1 border border-amber-300 shadow-lg">
+        ⚡ Install
+      </button>
+      <button id="soundToggleBtn" class="hud-card px-3 py-1.5 rounded-lg text-xs font-bold text-white hover:bg-white/10 border border-white/20">
+        🔊 Sound: ON
+      </button>
+      <button id="pauseBtn" class="hud-card px-3 py-1.5 rounded-lg text-xs font-bold text-white hover:bg-white/10 border border-white/20">
+        ⏸️ Pause
+      </button>
+    </div>
+  </div>
+
+  <!-- Touch Joystick & Action Buttons -->
+  <div id="touchControls" class="z-20">
+    <div id="joystickZone">
+      <div id="joystickStick"></div>
+    </div>
+
+    <button id="runBtn" class="control-btn bg-emerald-600/80 border-emerald-300" style="bottom: 30px; right: 125px;">
+      <span class="text-lg">🏃</span>
+      <span class="text-[10px]">RUN</span>
+    </button>
+    <button id="kickBtn" class="control-btn bg-amber-600/80 border-amber-300" style="bottom: 115px; right: 30px;">
+      <span class="text-lg">🦶</span>
+      <span class="text-[10px]">KICK</span>
+    </button>
+    <button id="punchBtn" class="control-btn bg-rose-600/80 border-rose-300" style="bottom: 30px; right: 30px;">
+      <span class="text-lg">👊</span>
+      <span class="text-[10px]">PUNCH</span>
+    </button>
+  </div>
+
+  <!-- Game Over Overlay -->
+  <div id="gameOverModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center z-50 p-4">
+    <div class="hud-card p-6 rounded-2xl max-w-sm w-full text-center border border-emerald-500/30 flex flex-col items-center gap-4">
+      <h2 class="text-3xl font-black text-rose-500 tracking-wider">GAME OVER</h2>
+      <p class="text-gray-300 text-sm">Defeated in the wild jungle!</p>
+      
+      <div class="bg-black/40 rounded-xl p-4 w-full border border-white/10 flex flex-col gap-2">
+        <div class="flex justify-between text-sm"><span class="text-gray-400">Final Score:</span><span id="finalScore" class="font-bold text-amber-400">0</span></div>
+        <div class="flex justify-between text-sm"><span class="text-gray-400">Rank Reached:</span><span id="finalRank" class="font-bold text-emerald-400">Scout</span></div>
+        <div class="flex justify-between text-sm"><span class="text-gray-400">Rivals Knocked Out:</span><span id="finalKills" class="font-bold text-white">0</span></div>
+      </div>
+
+      <button id="restartBtn" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-black font-black text-lg rounded-xl shadow-lg hover:brightness-110 active:scale-95 transition-all">
+        PLAY AGAIN ⚔️
+      </button>
+    </div>
+  </div>
+
+  <!-- Pause Modal -->
+  <div id="pauseModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-md flex flex-col items-center justify-center z-50 p-4">
+    <div class="hud-card p-6 rounded-2xl max-w-xs w-full text-center border border-white/20 flex flex-col gap-4">
+      <h2 class="text-2xl font-bold text-white">GAME PAUSED</h2>
+      <div class="text-xs text-gray-300 text-left space-y-1 bg-black/40 p-3 rounded-lg border border-white/10">
+        <p class="font-bold text-emerald-400 mb-1">Desktop Controls:</p>
+        <p>• Move: <kbd class="bg-white/20 px-1 rounded">WASD</kbd> or <kbd class="bg-white/20 px-1 rounded">Arrows</kbd></p>
+        <p>• Punch: <kbd class="bg-white/20 px-1 rounded">J</kbd> or <kbd class="bg-white/20 px-1 rounded">Space</kbd></p>
+        <p>• Kick: <kbd class="bg-white/20 px-1 rounded">K</kbd></p>
+        <p>• Run Toggle: <kbd class="bg-white/20 px-1 rounded">Shift</kbd></p>
+      </div>
+      <button id="resumeBtn" class="py-2.5 bg-emerald-500 text-black font-bold rounded-xl hover:bg-emerald-400">
+        Resume Game
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Self-contained Service Worker & Manifest dynamic registration for PWA readiness
+    (function setupPwa() {
+      const manifestData = {
+        name: "Jungle Avatar Survival PWA",
+        short_name: "JungleSurvival",
+        description: "Action top-down jungle brawler survival PWA",
+        start_url: "./",
+        display: "standalone",
+        orientation: "landscape-primary",
+        background_color: "#0d1e08",
+        theme_color: "#0d1e08",
+        icons: [
+          {
+            src: "https://placehold.co/192x192/0d1e08/00ffcc?text=JUNGLE",
+            sizes: "192x192",
+            type: "image/png"
+          },
+          {
+            src: "https://placehold.co/512x512/0d1e08/00ffcc?text=JUNGLE",
+            sizes: "512x512",
+            type: "image/png"
+          }
+        ]
+      };
+
+      const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
+      const manifestUrl = URL.createObjectURL(manifestBlob);
+      const manifestLink = document.createElement('link');
+      manifestLink.rel = 'manifest';
+      manifestLink.href = manifestUrl;
+      document.head.appendChild(manifestLink);
+
+      if ('serviceWorker' in navigator) {
+        const swCode = `
+          const CACHE_NAME = 'jungle-avatar-v1';
+          self.addEventListener('install', (e) => {
+            self.skipWaiting();
+          });
+          self.addEventListener('activate', (e) => {
+            e.waitUntil(clients.claim());
+          });
+          self.addEventListener('fetch', (e) => {
+            e.respondWith(
+              fetch(e.request).catch(() => caches.match(e.request))
+            );
+          });
+        `;
+        const swBlob = new Blob([swCode], { type: 'text/javascript' });
+        const swUrl = URL.createObjectURL(swBlob);
+        
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register(swUrl)
+            .then(() => console.log('PWA Service Worker dynamic registration succeeded.'))
+            .catch(err => console.log('Service Worker failed:', err));
+        });
+      }
+
+      let deferredPrompt = null;
+      const installBtn = document.getElementById('installPwaBtn');
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (installBtn) installBtn.classList.remove('hidden');
+      });
+
+      if (installBtn) {
+        installBtn.addEventListener('click', async () => {
+          if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+              installBtn.classList.add('hidden');
+            }
+            deferredPrompt = null;
+          }
+        });
+      }
+    })();
+
+    // Procedural Audio Engine using Web Audio API
+    class AudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playPunch() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.exponentialRampToValueAtTime(30, now + 0.12);
+
+        gain.gain.setValueAtTime(0.6, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.12);
+      }
+
+      playKick() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.exponentialRampToValueAtTime(20, now + 0.18);
+
+        gain.gain.setValueAtTime(0.8, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.18);
+      }
+
+      playHit() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const bufferSize = this.ctx.sampleRate * 0.08;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(800, now);
+
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        noise.start(now);
+      }
+
+      playRankUp() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const notes = [261.63, 329.63, 392.00, 523.25];
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+
+          gain.gain.setValueAtTime(0.3, now + idx * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.25);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(now + idx * 0.08);
+          osc.stop(now + idx * 0.08 + 0.25);
+        });
+      }
+
+      playGameOver() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const notes = [300, 260, 220, 150];
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.15);
+
+          gain.gain.setValueAtTime(0.4, now + idx * 0.15);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.15 + 0.2);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(now + idx * 0.15);
+          osc.stop(now + idx * 0.15 + 0.2);
+        });
+      }
+    }
+
+    const sounds = new AudioEngine();
+
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    let score = 0;
+    let rank = 1;
+    let killsCount = 0;
+    let isRunningToggle = false;
+    let isPaused = false;
+    let isGameOver = false;
+
+    const trees = [];
+    function generateJungleMap() {
+      trees.length = 0;
+      const count = Math.floor((canvas.width * canvas.height) / 35000) + 12;
+      for (let i = 0; i < count; i++) {
+        trees.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: 25 + Math.random() * 20
+        });
+      }
+    }
+    generateJungleMap();
+
+    const player = {
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      radius: 18,
+      walkSpeed: 3.8,
+      runSpeed: 6.8,
+      hp: 100,
+      maxHp: 100,
+      angle: 0,
+      isMoving: false,
+      animFrame: 0,
+      action: 'idle',
+      actionTimer: 0,
+      skinColor: '#f1c27d',
+      shirtColor: '#2e7d32',
+      pantsColor: '#3e2723',
+      hairColor: '#1b0000',
+      fistSize: 12
+    };
+
+    const rivals = [];
+    const rivalNames = ['Shadow Tracker', 'Jungle Raider', 'Wild Stalker', 'Viper Brawler', 'Tribal Hunter'];
+    const rivalStyles = [
+      { shirt: '#c62828', pants: '#1565c0', hair: '#212121', skin: '#e0ac69' },
+      { shirt: '#6a1b9a', pants: '#37474f', hair: '#f57f17', skin: '#ffdbac' },
+      { shirt: '#ef6c00', pants: '#2e7d32', hair: '#4e342e', skin: '#8d6e63' },
+      { shirt: '#00838f', pants: '#424242', hair: '#000000', skin: '#f1c27d' }
+    ];
+
+    function spawnRival() {
+      if (isGameOver || isPaused) return;
+      if (rivals.length < 6) {
+        const style = rivalStyles[Math.floor(Math.random() * rivalStyles.length)];
+        const side = Math.floor(Math.random() * 4);
+        let rx, ry;
+        if (side === 0) { rx = -30; ry = Math.random() * canvas.height; }
+        else if (side === 1) { rx = canvas.width + 30; ry = Math.random() * canvas.height; }
+        else if (side === 2) { rx = Math.random() * canvas.width; ry = -30; }
+        else { rx = Math.random() * canvas.width; ry = canvas.height + 30; }
+
+        rivals.push({
+          x: rx,
+          y: ry,
+          radius: 16,
+          speed: 2.0 + Math.random() * 1.2,
+          hp: 60 + (rank * 15),
+          maxHp: 60 + (rank * 15),
+          angle: 0,
+          animFrame: Math.random() * 10,
+          action: 'idle',
+          actionTimer: 0,
+          name: rivalNames[Math.floor(Math.random() * rivalNames.length)],
+          skinColor: style.skin,
+          shirtColor: style.shirt,
+          pantsColor: style.pants,
+          hairColor: style.hair,
+          fistSize: 9
+        });
+      }
+    }
+    setInterval(spawnRival, 2500);
+
+    const particles = [];
+    const damageTexts = [];
+
+    function addHitSparks(x, y, color = '#ffeb3b') {
+      for (let i = 0; i < 10; i++) {
+        const pAngle = Math.random() * Math.PI * 2;
+        const pSpeed = 2 + Math.random() * 5;
+        particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(pAngle) * pSpeed,
+          vy: Math.sin(pAngle) * pSpeed,
+          life: 1.0,
+          color: color,
+          size: 3 + Math.random() * 3
+        });
+      }
+    }
+
+    function addFloatingText(text, x, y, color = '#ff5252') {
+      damageTexts.push({
+        text: text,
+        x: x,
+        y: y,
+        vy: -1.5,
+        life: 1.0,
+        color: color
+      });
+    }
+
+    const joystickZone = document.getElementById('joystickZone');
+    const joystickStick = document.getElementById('joystickStick');
+    let moveVector = { x: 0, y: 0 };
+    let activeTouchId = null;
+
+    joystickZone.addEventListener('touchstart', (e) => {
+      sounds.init();
+      if (activeTouchId === null) {
+        const touch = e.changedTouches[0];
+        activeTouchId = touch.identifier;
+        updateJoystick(touch);
+      }
+    }, { passive: false });
+
+    window.addEventListener('touchmove', (e) => {
+      if (activeTouchId !== null) {
+        for (let i = 0; i < e.touches.length; i++) {
+          if (e.touches[i].identifier === activeTouchId) {
+            updateJoystick(e.touches[i]);
+            break;
+          }
+        }
+      }
+    }, { passive: false });
+
+    function resetJoystick() {
+      activeTouchId = null;
+      joystickStick.style.transform = 'translate(0px, 0px)';
+      moveVector = { x: 0, y: 0 };
+      if (!keyState.isMoving) player.isMoving = false;
+    }
+
+    window.addEventListener('touchend', (e) => {
+      for (let i = 0; i < e.changedTouches.length; i++) {
+        if (e.changedTouches[i].identifier === activeTouchId) {
+          resetJoystick();
+          break;
+        }
+      }
+    });
+
+    function updateJoystick(touch) {
+      const rect = joystickZone.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      let dx = touch.clientX - centerX;
+      let dy = touch.clientY - centerY;
+      const dist = Math.hypot(dx, dy);
+      const maxDist = rect.width / 2;
+
+      if (dist > maxDist) {
+        dx = (dx / dist) * maxDist;
+        dy = (dy / dist) * maxDist;
+      }
+
+      joystickStick.style.transform = `translate(${dx}px, ${dy}px)`;
+      moveVector.x = dx / maxDist;
+      moveVector.y = dy / maxDist;
+
+      if (dist > 8) {
+        player.isMoving = true;
+        player.angle = Math.atan2(dy, dx);
+      } else if (!keyState.isMoving) {
+        player.isMoving = false;
+      }
+    }
+
+    const runBtn = document.getElementById('runBtn');
+    runBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      sounds.init();
+      isRunningToggle = !isRunningToggle;
+      runBtn.querySelector('span:nth-child(2)').innerText = isRunningToggle ? 'RUNNING' : 'RUN';
+      runBtn.classList.toggle('bg-amber-600/80', isRunningToggle);
+      runBtn.classList.toggle('bg-emerald-600/80', !isRunningToggle);
+    });
+
+    document.getElementById('punchBtn').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      sounds.init();
+      triggerPlayerAction('punch');
+    });
+
+    document.getElementById('kickBtn').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      sounds.init();
+      triggerPlayerAction('kick');
+    });
+
+    const keys = {};
+    const keyState = { isMoving: false };
+
+    window.addEventListener('keydown', (e) => {
+      sounds.init();
+      keys[e.code] = true;
+      if (['Space', 'KeyJ'].includes(e.code)) triggerPlayerAction('punch');
+      if (e.code === 'KeyK') triggerPlayerAction('kick');
+      if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
+        isRunningToggle = !isRunningToggle;
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      keys[e.code] = false;
+    });
+
+    function handleKeyboardMovement() {
+      let kx = 0;
+      let ky = 0;
+      if (keys['KeyW'] || keys['ArrowUp']) ky -= 1;
+      if (keys['KeyS'] || keys['ArrowDown']) ky += 1;
+      if (keys['KeyA'] || keys['ArrowLeft']) kx -= 1;
+      if (keys['KeyD'] || keys['ArrowRight']) kx += 1;
+
+      if (kx !== 0 || ky !== 0) {
+        const len = Math.hypot(kx, ky);
+        moveVector.x = kx / len;
+        moveVector.y = ky / len;
+        player.angle = Math.atan2(ky, kx);
+        player.isMoving = true;
+        keyState.isMoving = true;
+      } else {
+        keyState.isMoving = false;
+        if (activeTouchId === null) {
+          player.isMoving = false;
+        }
+      }
+    }
+
+    function triggerPlayerAction(type) {
+      if (player.action !== 'idle' || isGameOver || isPaused) return;
+      player.action = type;
+      player.actionTimer = 14;
+
+      if (type === 'punch') sounds.playPunch();
+      if (type === 'kick') sounds.playKick();
+
+      const attackRange = type === 'punch' ? 65 : 80;
+      const damage = type === 'punch' ? 30 : 45;
+
+      rivals.forEach((rival, idx) => {
+        const dist = Math.hypot(player.x - rival.x, player.y - rival.y);
+        if (dist < attackRange) {
+          const angleToRival = Math.atan2(rival.y - player.y, rival.x - player.x);
+          let angleDiff = Math.abs(player.angle - angleToRival);
+          if (angleDiff > Math.PI) angleDiff = Math.PI * 2 - angleDiff;
+
+          if (angleDiff < Math.PI / 1.5) {
+            rival.hp -= damage;
+            sounds.playHit();
+            addHitSparks(rival.x, rival.y, type === 'punch' ? '#ff3333' : '#ff9900');
+            addFloatingText(`-${damage}`, rival.x, rival.y - 20, '#ff3333');
+
+            rival.x += Math.cos(player.angle) * 35;
+            rival.y += Math.sin(player.angle) * 35;
+
+            if (rival.hp <= 0) {
+              rivals.splice(idx, 1);
+              killsCount++;
+              score += 150;
+              addFloatingText('+150 PTS', rival.x, rival.y - 35, '#ffcc00');
+              checkRankProgression();
+            }
+          }
+        }
+      });
+    }
+
+    function checkRankProgression() {
+      let newRank = rank;
+      if (score >= 1200 && rank < 3) {
+        newRank = 3;
+        player.shirtColor = '#ffb300';
+        player.fistSize = 16;
+      } else if (score >= 450 && rank < 2) {
+        newRank = 2;
+        player.shirtColor = '#1565c0';
+        player.fistSize = 14;
+      }
+
+      if (newRank !== rank) {
+        rank = newRank;
+        sounds.playRankUp();
+        const rankTitle = rank === 3 ? 'Apex Master' : rank === 2 ? 'Warrior' : 'Scout';
+        addFloatingText(`RANK UP: ${rankTitle}!`, player.x, player.y - 40, '#00ffcc');
+      }
+
+      document.getElementById('scoreDisplay').innerText = `${score} PTS`;
+      document.getElementById('heroRank').innerText = rank === 3 ? 'Apex Master' : rank === 2 ? 'Warrior' : 'Scout';
+    }
+
+    function drawAvatar(char, isPlayer = false) {
+      ctx.save();
+      ctx.translate(char.x, char.y);
+      ctx.rotate(char.angle);
+
+      const legAnim = Math.sin(char.animFrame) * 12;
+      const currentFist = char.action === 'punch' ? char.fistSize * 1.5 : char.fistSize;
+
+      if (isPlayer) {
+        ctx.beginPath();
+        ctx.arc(0, 0, 26, 0, Math.PI * 2);
+        ctx.strokeStyle = '#00ffcc';
+        ctx.lineWidth = 2.5;
+        ctx.setLineDash([6, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      ctx.strokeStyle = char.pantsColor;
+      ctx.lineWidth = 8;
+      ctx.lineCap = 'round';
+
+      ctx.beginPath();
+      ctx.moveTo(-6, 4);
+      ctx.lineTo(-6 + (char.isMoving ? legAnim : 0), 20);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(6, 4);
+      if (char.action === 'kick') {
+        ctx.lineTo(28, 4);
+      } else {
+        ctx.lineTo(6 - (char.isMoving ? legAnim : 0), 20);
+      }
+      ctx.stroke();
+
+      ctx.fillStyle = char.shirtColor;
+      ctx.beginPath();
+      ctx.roundRect(-12, -14, 24, 24, 6);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(0, -20, 10, 0, Math.PI * 2);
+      ctx.fillStyle = char.skinColor;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(0, -23, 9.5, Math.PI, Math.PI * 2);
+      ctx.fillStyle = char.hairColor;
+      ctx.fill();
+
+      ctx.fillStyle = char.skinColor;
+      ctx.strokeStyle = char.skinColor;
+      ctx.lineWidth = 6;
+
+      ctx.beginPath();
+      ctx.moveTo(-12, -8);
+      ctx.lineTo(-18, 6);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(-18, 8, currentFist, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(12, -8);
+      if (char.action === 'punch') {
+        ctx.lineTo(28, -8);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(36, -8, currentFist * 1.3, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.lineTo(18, 6);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(18, 8, currentFist, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+
+      if (!isPlayer) {
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 11px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(char.name, char.x, char.y - 36);
+
+        const hpPct = Math.max(0, char.hp / char.maxHp);
+        ctx.fillStyle = 'rgba(0,0,0,0.6)';
+        ctx.fillRect(char.x - 18, char.y - 32, 36, 5);
+        ctx.fillStyle = hpPct > 0.4 ? '#4caf50' : '#f44336';
+        ctx.fillRect(char.x - 18, char.y - 32, 36 * hpPct, 5);
+      }
+    }
+
+    function drawJungleEnvironment() {
+      ctx.fillStyle = '#14320b';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#1a3e0e';
+      for (let x = 30; x < canvas.width; x += 90) {
+        for (let y = 30; y < canvas.height; y += 90) {
+          ctx.beginPath();
+          ctx.arc(x, y, 12, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      trees.forEach(tree => {
+        ctx.beginPath();
+        ctx.arc(tree.x, tree.y, tree.radius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(10, 25, 6, 0.85)';
+        ctx.fill();
+        ctx.strokeStyle = '#2d5a1e';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+      });
+    }
+
+    function updateGame() {
+      if (isPaused || isGameOver) return;
+
+      handleKeyboardMovement();
+
+      const speed = isRunningToggle ? player.runSpeed : player.walkSpeed;
+      if (player.isMoving) {
+        player.x += moveVector.x * speed;
+        player.y += moveVector.y * speed;
+        player.animFrame += isRunningToggle ? 0.35 : 0.18;
+      }
+
+      if (player.actionTimer > 0) {
+        player.actionTimer--;
+        if (player.actionTimer === 0) player.action = 'idle';
+      }
+
+      player.x = Math.max(25, Math.min(canvas.width - 25, player.x));
+      player.y = Math.max(25, Math.min(canvas.height - 25, player.y));
+
+      rivals.forEach(rival => {
+        const dx = player.x - rival.x;
+        const dy = player.y - rival.y;
+        const dist = Math.hypot(dx, dy);
+
+        rival.angle = Math.atan2(dy, dx);
+        rival.x += Math.cos(rival.angle) * rival.speed;
+        rival.y += Math.sin(rival.angle) * rival.speed;
+        rival.animFrame += 0.12;
+
+        if (dist < 32) {
+          player.hp -= 0.22;
+          if (Math.random() < 0.05) {
+            sounds.playHit();
+            addHitSparks(player.x, player.y, '#ff1744');
+          }
+
+          if (player.hp <= 0) {
+            player.hp = 0;
+            triggerGameOver();
+          }
+        }
+      });
+
+      const hpBar = document.getElementById('hpBar');
+      const hpText = document.getElementById('hpText');
+      const hpPct = Math.max(0, (player.hp / player.maxHp) * 100);
+      hpBar.style.width = `${hpPct}%`;
+      hpText.innerText = `${Math.ceil(player.hp)} / ${player.maxHp} HP`;
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= 0.05;
+        if (p.life <= 0) particles.splice(i, 1);
+      }
+
+      for (let i = damageTexts.length - 1; i >= 0; i--) {
+        const t = damageTexts[i];
+        t.y += t.vy;
+        t.life -= 0.03;
+        if (t.life <= 0) damageTexts.splice(i, 1);
+      }
+    }
+
+    function renderGame() {
+      drawJungleEnvironment();
+      rivals.forEach(rival => drawAvatar(rival, false));
+      drawAvatar(player, true);
+
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.life;
+        ctx.fill();
+        ctx.globalAlpha = 1.0;
+      });
+
+      damageTexts.forEach(t => {
+        ctx.fillStyle = t.color;
+        ctx.font = 'black 14px Arial';
+        ctx.textAlign = 'center';
+        ctx.globalAlpha = Math.max(0, t.life);
+        ctx.fillText(t.text, t.x, t.y);
+        ctx.globalAlpha = 1.0;
+      });
+    }
+
+    function gameLoop() {
+      updateGame();
+      renderGame();
+      requestAnimationFrame(gameLoop);
+    }
+
+    function triggerGameOver() {
+      isGameOver = true;
+      sounds.playGameOver();
+      document.getElementById('finalScore').innerText = score;
+      document.getElementById('finalRank').innerText = rank === 3 ? 'Apex Master' : rank === 2 ? 'Warrior' : 'Scout';
+      document.getElementById('finalKills').innerText = killsCount;
+      document.getElementById('gameOverModal').classList.remove('hidden');
+    }
+
+    document.getElementById('restartBtn').addEventListener('click', () => {
+      score = 0;
+      rank = 1;
+      killsCount = 0;
+      player.hp = 100;
+      player.x = canvas.width / 2;
+      player.y = canvas.height / 2;
+      player.shirtColor = '#2e7d32';
+      player.fistSize = 12;
+      rivals.length = 0;
+      isGameOver = false;
+      document.getElementById('gameOverModal').classList.add('hidden');
+      document.getElementById('scoreDisplay').innerText = '0 PTS';
+      document.getElementById('heroRank').innerText = 'Scout';
+    });
+
+    const pauseBtn = document.getElementById('pauseBtn');
+    const pauseModal = document.getElementById('pauseModal');
+    const resumeBtn = document.getElementById('resumeBtn');
+
+    pauseBtn.addEventListener('click', () => {
+      isPaused = !isPaused;
+      pauseModal.classList.toggle('hidden', !isPaused);
+      pauseBtn.innerText = isPaused ? '▶️ Resume' : '⏸️ Pause';
+    });
+
+    resumeBtn.addEventListener('click', () => {
+      isPaused = false;
+      pauseModal.classList.add('hidden');
+      pauseBtn.innerText = '⏸️ Pause';
+    });
+
+    const soundToggleBtn = document.getElementById('soundToggleBtn');
+    soundToggleBtn.addEventListener('click', () => {
+      sounds.enabled = !sounds.enabled;
+      soundToggleBtn.innerText = sounds.enabled ? '🔊 Sound: ON' : '🔇 Sound: OFF';
+    });
+
+    window.onload = function() {
+      gameLoop();
+    };
+  </script>
 </body>
 </html>
-```
-
-### Summary of Features Included
-1. **Self-Contained PWA Engine**: Automatic Blob injection of `manifest.json` and `sw.js` with install banner listening.
-2. **Dynamic Top-Down Canvas Graphics**: Full limbs, fists, walking animations, foliage canopy, and hit spark particle systems.
-3. **Procedural Web Audio API Sound Effects**: Synthesized audio for punches, kicks, hits, rank updates, and defeat.
-4. **Responsive Controls**: Multi-touch 360-degree virtual analog joystick on mobile + WASD / Shift / Space / J / K keyboard bindings on desktop preview.
